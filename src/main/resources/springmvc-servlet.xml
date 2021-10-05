@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jee
+	   http://www.springframework.org/schema/jee/spring-jee.xsd
+	   http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 扫描包 -->
+    <context:component-scan base-package="com.haorui"/>
+
+    <!--注解映射器 -->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
+    <!--注解适配器 -->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>-->
+    <mvc:annotation-driven/>
+
+    <!--配置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--配置数据源-->
+    <bean id="dbSrc" class="org.apache.commons.dbcp2.BasicDataSource" >
+        <!-- 属性注入，注入驱动名字 -->
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <!-- 数据库连接字符串 -->
+        <property name="url"
+                  value="jdbc:mysql://1.116.138.153:3306/hr?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;useSSL=false" />
+        <!--数据库连接的用户名和密码配置  -->
+        <property name="username" value="root" />
+        <property name="password" value="hr666666" /><!--注意要用你自己的密码  -->
+    </bean>
+
+    <!-- spring和mybatis整合相关配置 -->
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件，
+        整合配置后，自动检索对应包下的mapper映射文件
+    -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 配置注入数据源 -->
+        <property name="dataSource" ref="dbSrc" />
+        <!-- 配置自动扫描mapper映射文件，指定路径即可：
+            所有com.jsut.mapping包下的xml文件被自动扫描 -->
+        <property name="mapperLocations" value="classpath:com/haorui/dao/*.xml" />
+
+    </bean>
+    <!-- spring和mybatis整合，自动扫描mapper接口，
+        mapper接口的自动扫描
+     -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 配置sql会话工厂，实际上就是上面定义的sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <!-- 配置自动扫描mapper接口的包路径：
+             spring自动扫描com.jsut.dao包下的所有接口 -->
+        <property name="basePackage" value="com.haorui.dao" />
+    </bean>
+
+
+</beans>

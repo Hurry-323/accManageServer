@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haorui.dao.PersonInfoDao">
+
+
+    <!--接收多表联查的数据-->
+    <resultMap id="collectMap" type="com.haorui.pojo.Accounts">
+        <id property="accountId" column="accountId"/>
+        <result property="balance" column="balance"/>
+        <!--<result property="personId" column="personId"/>-->
+
+        <association property="personInfo" javaType="com.haorui.pojo.PersonInfo">
+            <id property="personId" column="personId"/>
+            <result property="realName" column="realName"/>
+            <result property="birthday" column="birthday"/>
+            <result property="sex" column="sex"/>
+            <result property="cardId" column="cardId"/>
+            <result property="address" column="address"/>
+            <result property="telephone" column="telephone"/>
+            <result property="mail" column="mail"/>
+
+        </association>
+    </resultMap>
+    <!--通过用户账户名查所有信息-->
+    <select id="findAllInfoByAccountId" resultMap="collectMap">
+        select *
+        from accounts
+            right join personInfo on accounts.personId = personInfo.personId
+        where accounts.accountId =#{accountId}
+
+
+    </select>
+
+</mapper>
